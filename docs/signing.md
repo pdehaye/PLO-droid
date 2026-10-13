@@ -11,17 +11,22 @@ PLO-droid:
 
 ## One-time setup
 
-1. On a trusted machine:
+1. On a trusted machine with a Java JDK (`keytool`; on macOS
+   `brew install openjdk`), from the repository root:
 
    ```sh
-   export FDROID_KEYSTORE_PASS='<long random password>'
-   scripts/new-keystore.sh
+   bash scripts/new-keystore.sh
    ```
+
+   It asks for a password (min. 12 characters) and writes `keystore.p12`
+   at the repository root. Do **not** run `scripts/setup-signing.sh`
+   locally: it only runs in CI.
 
 2. Back up `keystore.p12` and its password offline (e.g. the commune's
    password manager, plus a copy in a safe). It is git-ignored; never commit it.
 3. In GitHub → *Settings → Secrets and variables → Actions*, add:
-   - `FDROID_KEYSTORE_B64` — output of `base64 -w0 keystore.p12`
+   - `FDROID_KEYSTORE_B64` — output of `base64 < keystore.p12 | tr -d '\n'` (works on macOS and Linux;
+     on macOS append `| pbcopy` to copy it straight to the clipboard)
    - `FDROID_KEYSTORE_PASS` — the password
    - `FDROID_KEY_PASS` — only if different from the keystore password
 4. In GitHub → *Settings → Pages*, set **Source: GitHub Actions**.

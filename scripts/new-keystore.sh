@@ -5,6 +5,8 @@
 # added the repo pins its fingerprint. Losing it means every user has to
 # re-add the repo; leaking it lets anyone impersonate the store. Back it up
 # offline and store it as GitHub Actions secrets (see docs/signing.md).
+# Re-run under bash if started with `sh script.sh`.
+if [ -z "${BASH_VERSION:-}" ]; then exec bash "$0" "$@"; fi
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -14,7 +16,24 @@ if [[ -e keystore.p12 ]]; then
   exit 1
 fi
 
-: "${FDROID_KEYSTORE_PASS:?export FDROID_KEYSTORE_PASS first}"
+if ! command -v keytool >/dev/null 2>&1; then
+  echo "keytool not found: install a Java JDK first (macOS: brew install openjdk)." >&2
+  exit 1
+fi
+
+# Ask for the password if it was not provided through the environment.
+if [[ -z "${FDROID_KEYSTORE_PASS:-}" ]]; then
+  read -r -s -p "Choose a keystore password (min. 12 characters): " FDROID_KEYSTORE_PASS; echo
+  read -r -s -p "Repeat the password: " confirm; echo
+  if [[ "$FDROID_KEYSTORE_PASS" != "$confirm" ]]; then
+    echo "Passwords do not match." >&2
+    exit 1
+  fi
+fi
+if (( ${#FDROID_KEYSTORE_PASS} < 12 )); then
+  echo "Password too short (min. 12 characters)." >&2
+  exit 1
+fi
 
 keytool -genkeypair -v \
   -keystore keystore.p12 -storetype PKCS12 \
@@ -30,7 +49,7 @@ echo
 echo "Created keystore.p12. Next steps:"
 echo "  1. Back it up offline (password manager / safe)."
 echo "  2. Add these GitHub Actions secrets to the repository:"
-echo "       FDROID_KEYSTORE_B64   = output of: base64 -w0 keystore.p12"
+echo "       FDROID_KEYSTORE_B64   = output of: base64 < keystore.p12 | tr -d '\\n'"
 echo "       FDROID_KEYSTORE_PASS  = the keystore password"
 echo "     (PKCS12 uses the same password for the key, so FDROID_KEY_PASS"
 echo "      defaults to FDROID_KEYSTORE_PASS.)"
