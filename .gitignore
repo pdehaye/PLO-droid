@@ -1,5 +1,6 @@
 # Signing material — never commit
 keystore.p12
+keystore.p12.b64
 *.jks
 *.keystore
 config.local.yml

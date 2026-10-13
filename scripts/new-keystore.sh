@@ -45,11 +45,25 @@ keytool -genkeypair -v \
 
 chmod 600 keystore.p12
 
-echo
-echo "Created keystore.p12. Next steps:"
-echo "  1. Back it up offline (password manager / safe)."
-echo "  2. Add these GitHub Actions secrets to the repository:"
-echo "       FDROID_KEYSTORE_B64   = output of: base64 < keystore.p12 | tr -d '\\n'"
-echo "       FDROID_KEYSTORE_PASS  = the keystore password"
-echo "     (PKCS12 uses the same password for the key, so FDROID_KEY_PASS"
-echo "      defaults to FDROID_KEYSTORE_PASS.)"
+# Text (base64) copy of the keystore: this is what goes into the GitHub secret
+# and into a password manager (e.g. a Bitwarden secure note), which cannot
+# hold binary files without attachments.
+base64 < keystore.p12 | tr -d '\n' > keystore.p12.b64
+chmod 600 keystore.p12.b64
+
+cat <<'MSG'
+
+Created keystore.p12 and its text copy keystore.p12.b64 (both git-ignored).
+
+Next steps:
+  1. Back it up: in your password manager (e.g. a Bitwarden secure note),
+     store the password AND the content of keystore.p12.b64.
+     macOS: pbcopy < keystore.p12.b64   copies it to the clipboard.
+  2. Add these GitHub Actions secrets (Settings > Secrets and variables > Actions):
+       FDROID_KEYSTORE_B64   = content of keystore.p12.b64
+       FDROID_KEYSTORE_PASS  = the keystore password
+  3. Delete keystore.p12.b64 once both copies are saved:  rm keystore.p12.b64
+
+To restore keystore.p12 later from the text copy:
+  base64 -d < keystore.p12.b64 > keystore.p12
+MSG
