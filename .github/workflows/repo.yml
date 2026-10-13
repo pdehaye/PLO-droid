@@ -1,0 +1,89 @@
+name: Build and publish the F-Droid repo
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install fdroidserver
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends apksigner
+          pip install -r requirements.txt
+          chmod 600 config.yml
+          mkdir -p repo
+
+      - name: Lint metadata
+        run: fdroid lint
+
+      - name: Restore signing key
+        if: github.event_name != 'pull_request'
+        env:
+          FDROID_KEYSTORE_B64: ${{ secrets.FDROID_KEYSTORE_B64 }}
+          FDROID_KEYSTORE_PASS: ${{ secrets.FDROID_KEYSTORE_PASS }}
+        run: scripts/setup-signing.sh
+
+      - name: Build signed index
+        if: github.event_name != 'pull_request'
+        env:
+          FDROID_KEYSTORE_PASS: ${{ secrets.FDROID_KEYSTORE_PASS }}
+          FDROID_KEY_PASS: ${{ secrets.FDROID_KEY_PASS || secrets.FDROID_KEYSTORE_PASS }}
+        run: |
+          fdroid update --pretty
+          rm -f keystore.p12
+
+      - name: Assemble site
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p _site
+          cp -r repo _site/repo
+          [ -d archive ] && cp -r archive _site/archive || true
+          rm -rf _site/repo/status _site/archive/status
+          # Landing page at the site root points to the generated repo page
+          # (QR code + "add repository" link with the signing fingerprint).
+          cat > _site/index.html <<'HTML'
+          <!doctype html><meta charset="utf-8">
+          <meta http-equiv="refresh" content="0; url=repo/">
+          <title>PLO-droid</title><a href="repo/">PLO-droid</a>
+          HTML
+          touch _site/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
+        with:
+          path: _site
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}repo/
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

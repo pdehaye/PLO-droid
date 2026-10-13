@@ -1,0 +1,5 @@
+# Repository-specific categories, shown in the F-Droid client.
+# Standard F-Droid categories (Navigation, Science & Education, ...) remain usable.
+Plan-les-Ouates:
+  name: Plan-les-Ouates
+  description: Apps from and for the commune of Plan-les-Ouates.

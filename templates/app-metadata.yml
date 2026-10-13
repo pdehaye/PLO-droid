@@ -1,0 +1,32 @@
+# Template for metadata/<applicationId>.yml
+# Copy to metadata/<applicationId>.yml (e.g. metadata/ch.planlesouates.agenda.yml)
+# and fill in. Full reference: https://f-droid.org/docs/Build_Metadata_Reference/
+#
+# Localised texts (title, short/full description, screenshots) can also live
+# in metadata/<applicationId>/<locale>/ (fastlane layout), e.g.
+#   metadata/<applicationId>/fr-CH/title.txt
+#   metadata/<applicationId>/fr-CH/short_description.txt
+#   metadata/<applicationId>/fr-CH/full_description.txt
+#   metadata/<applicationId>/fr-CH/images/phoneScreenshots/1.png
+
+Categories:
+  - Plan-les-Ouates   # our own category; add standard ones too (Navigation, Science & Education, ...)
+License: GPL-3.0-or-later   # SPDX identifier
+AuthorName: Commune de Plan-les-Ouates
+AuthorEmail: informatique@example.ch   # TODO: real contact address
+WebSite: https://www.plan-les-ouates.ch
+SourceCode: https://github.com/OWNER/REPO
+IssueTracker: https://github.com/OWNER/REPO/issues
+
+AutoName: Example app
+Name: Example app   # overrides the name read from the APK
+
+Summary: One line, max 80 characters, no trailing period
+Description: |-
+  What the app does, who it is for, and why it is in PLO-droid.
+
+  Mention anti-features (tracking, non-free network services...) honestly.
+
+# Who reviewed the app for inclusion, and when (internal bookkeeping).
+# Free-form comments are ignored by fdroidserver.
+#   Reviewed-by: Name, YYYY-MM-DD

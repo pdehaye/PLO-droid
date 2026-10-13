@@ -1,0 +1,25 @@
+# fdroidserver configuration for the PLO-droid repository.
+# Reference: https://gitlab.com/fdroid/fdroidserver/-/blob/master/examples/config.yml
+#
+# Secrets (keystore, passwords) are NEVER committed. In CI they are injected
+# from GitHub Actions secrets by scripts/setup-signing.sh; locally, put them in
+# a git-ignored keystore.p12 and export the env vars below.
+
+repo_url: https://pdehaye.github.io/PLO-droid/repo
+repo_name: PLO-droid
+repo_icon: icon.png  # source file at the repo root, copied into repo/icons/
+repo_description: >-
+  PLO-droid is the app store of Plan-les-Ouates. It distributes free and
+  open-source Android apps that are useful to the residents, associations
+  and staff of the commune, built and signed by the Plan-les-Ouates team.
+
+archive_older: 3
+
+# Index signing
+repo_keyalias: plo-droid
+keystore: keystore.p12
+keystorepass: {env: FDROID_KEYSTORE_PASS}
+keypass: {env: FDROID_KEY_PASS}
+keydname: CN=PLO-droid, OU=Informatique, O=Commune de Plan-les-Ouates, L=Plan-les-Ouates, ST=Geneve, C=CH
+
+make_current_version_link: false

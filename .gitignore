@@ -1,0 +1,25 @@
+# Signing material — never commit
+keystore.p12
+*.jks
+*.keystore
+config.local.yml
+
+# fdroidserver working/output directories
+tmp/
+build/
+archive/
+unsigned/
+repo/index*
+repo/entry.*
+repo/diff/
+repo/*/
+repo/status/
+repo/categories.txt
+stats/
+.fdroid.*
+
+# Python
+__pycache__/
+.venv/
+venv/
+srclibs/
