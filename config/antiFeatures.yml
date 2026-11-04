@@ -1,0 +1,20 @@
+# Anti-features apps in PLO-droid may declare (fdroid lint only accepts the
+# ones listed here). Same keys as f-droid.org, so clients show them correctly.
+Ads:
+  name: Ads
+  description: This app contains advertising.
+NonFreeAdd:
+  name: Non-free add-ons
+  description: This app promotes or installs non-free add-ons.
+NonFreeAssets:
+  name: Non-free assets
+  description: This app contains non-free assets.
+NonFreeDep:
+  name: Non-free dependencies
+  description: This app depends on other non-free apps.
+NonFreeNet:
+  name: Non-free network services
+  description: This app promotes or depends entirely on a non-free network service.
+Tracking:
+  name: Tracking
+  description: This app tracks and reports your activity.
