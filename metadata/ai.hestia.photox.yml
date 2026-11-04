@@ -1,0 +1,34 @@
+# Photox is published automatically from hestiaAI/Photox: its
+# .github/workflows/android-publish.yml builds a signed release APK on every
+# android-v* tag and pushes it to repo/ here. See docs/adding-apps.md.
+
+Categories:
+  - Plan-les-Ouates
+License: GPL-3.0-or-later
+AuthorName: Hestia.ai
+WebSite: https://github.com/hestiaAI/Photox
+SourceCode: https://github.com/hestiaAI/Photox
+IssueTracker: https://github.com/hestiaAI/Photox/issues
+
+AutoName: Photox
+Name: Photox
+
+Summary: Photograph an object from all sides to build a 3D model of it
+Description: |-
+  Photox guides you as you walk around an object with your phone and takes
+  the photos needed to rebuild it in 3D (photogrammetry). It uses ARCore,
+  so no LiDAR is needed.
+
+  * Scan library: create, rename and delete scans (French and English).
+  * Guided capture: drop a box around the object, then walk around it. Photos are taken automatically when the image is sharp, and rings show which angles are covered.
+  * Optional size reference (credit card, A4 page, LEGO brick...) for true scale.
+  * Export the photos with their camera poses as a zip.
+
+  Building the 3D model on the phone is not available yet on Android.
+
+  Requires a phone that supports ARCore. Google Play Services for AR
+  (proprietary) is installed on demand.
+
+AntiFeatures:
+  NonFreeDep:
+    en-US: Needs Google Play Services for AR (ARCore), which is proprietary.

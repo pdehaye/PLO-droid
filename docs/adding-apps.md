@@ -36,6 +36,29 @@ Add the new APK to `repo/`. It **must be signed with the same key** as the
 previous version, otherwise clients refuse the update. Older versions are
 moved to the archive automatically (`archive_older` in `config.yml`).
 
+## Automatic publishing from the app's repository
+
+An app's own CI can publish new versions by pushing the APK straight to
+`repo/` on `main`. Photox does this (see its
+[`android-publish.yml`](https://github.com/hestiaAI/Photox/blob/main/.github/workflows/android-publish.yml)).
+To set it up for another app:
+
+1. Add its `metadata/<applicationId>.yml` here by pull request, as for any
+   new app.
+2. In the app's repository, generate a key pair
+   (`ssh-keygen -t ed25519 -N "" -f deploy`) and store the private key as an
+   Actions secret.
+3. Here, in *Settings → Deploy keys*, add the public key with **write
+   access**. One key per app, so each can be revoked on its own.
+4. The app's workflow checks out this repository with that key
+   (`actions/checkout` with `ssh-key:` and `lfs: true`), copies the APK to
+   `repo/<applicationId>_<versionCode>.apk`, commits and pushes to `main`.
+   The push triggers this repository's workflow, which publishes the update.
+
+Pushes made with a deploy key skip review, so only give one to apps whose
+maintainers we trust. Branch protection on `main` would block them, unless
+deploy keys are allowed to bypass it.
+
 ## Removing an app
 
 Delete its APKs from `repo/` and its file(s) from `metadata/`.
